@@ -1,10 +1,13 @@
 library(tuneR)
 
+#Run using 'Rscript fibgen.r <a> <b> <songname>'
+
 a <- 0
 b <- 1
 
 lower <- as.numeric(commandArgs()[6])
 upper <- as.numeric(commandArgs()[7])
+songname <- commandArgs()[8]
 
 notes <- list('C1' = sine(261, bit=8), 'D' = sine(294, bit=8), 'E' = sine(329, bit=8), 'F' = sine(349, bit=8), 'G' = sine(392, bit=8), 'A' = sine(440, bit=8), 'B' = sine(490, bit=8), 'C2' = sine(523, bit=8))
 
@@ -41,5 +44,5 @@ for (i in (lower:upper)) {
    song <- bind(song, getNote(nextFib()))
    }
 
-writeWave(song, 'fib.wav')
+writeWave(song, paste("../music/", songname, ".wav", sep=""))
 #play(song, 'vlc')
