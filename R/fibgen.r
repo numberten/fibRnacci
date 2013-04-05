@@ -3,11 +3,11 @@ library(tuneR)
 #Run using 'Rscript fibgen.r <a> <b> <songname>'
 
 a <- 0
-b <- 1
+b <- 0
 
-lower <- as.numeric(commandArgs()[6])
-upper <- as.numeric(commandArgs()[7])
-songname <- commandArgs()[8]
+#lower <- as.numeric(commandArgs()[6])
+#upper <- as.numeric(commandArgs()[7])
+#songname <- commandArgs()[8]
 
 notes <- list('C1' = sine(261, bit=8), 'D' = sine(294, bit=8), 'E' = sine(329, bit=8), 'F' = sine(349, bit=8), 'G' = sine(392, bit=8), 'A' = sine(440, bit=8), 'B' = sine(490, bit=8), 'C2' = sine(523, bit=8))
 
@@ -26,11 +26,12 @@ getNote <- function(n) {
    return(notes[[m]])
    }
 
-fib <- function(n) {
-   if (n == 0) { return(0) }
-   if (n == 1) { return(1) }
-   else { return(fib(n-1) + fib(n-2)) }
-   }
+# R doesn't have tail recursion, inefficient, but not in implementation.
+#fib <- function(n) {
+#   if (n == 0) { return(0) }
+#   if (n == 1) { return(1) }
+#   else { return(fib(n-1) + fib(n-2)) }
+#   }
 
 nextFib <- function() {
    c <- (a + b) %% 7
@@ -39,10 +40,26 @@ nextFib <- function() {
    return(c)
    }
 
-song <- bind(getNote(0), getNote(1))
-for (i in (lower:upper)) {
-   song <- bind(song, getNote(nextFib()))
+main <- function(s1, s2, t) {
+   t <- t - 2
+   assign("a", (s1 %% 7), envir = .GlobalEnv)
+   assign("b", (s2 %% 7), envir = .GlobalEnv)
+   xs <- c(a, b)
+   while (t > 0) {
+      xs <- c(xs, nextFib())
+      t <- t - 1
    }
+   return(xs)
+}
 
-writeWave(song, paste("../music/", songname, ".wav", sep=""))
+generateSong <- function(xs, songname) {
+   song <- bind(getNote(xs[1]))
+   xs <- xs[-1]
+   for (i in xs) {
+      song <- bind(song, getNote(i))
+   }
+   writeWave(song, paste("../music/", songname, ".wav", sep=""))
+}
+
+#writeWave(song, paste("../music/", songname, ".wav", sep=""))
 #play(song, 'vlc')
