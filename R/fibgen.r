@@ -52,12 +52,16 @@ main <- function(s1, s2, t) {
    return(xs)
 }
 
-generateSong <- function(xs, songname) {
+generateTrack <- function(xs) {
    song <- bind(getNote(xs[1]))
    xs <- xs[-1]
    for (i in xs) {
       song <- bind(song, getNote(i))
    }
+   return(song)
+}
+
+generateSong <- function(song, songname) {
    writeWave(song, paste("../music/", songname, ".wav", sep=""))
 }
 
